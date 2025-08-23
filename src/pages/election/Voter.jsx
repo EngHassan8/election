@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import SideBar from '../../componets/SideBar';
 
+const API_URL = "https://back-24vm.onrender.com"; // ← URL-kaaga Render
+
 function Voter() {
   const [candidates, setCandidates] = useState([]);
   const [votedCandidateId, setVotedCandidateId] = useState(null);
   const [openPosition, setOpenPosition] = useState(null);
 
-  // Load on mount
   useEffect(() => {
     const voter = JSON.parse(localStorage.getItem("voterUser"));
     if (voter?.ID) {
       axios
-        .get(`http://localhost:3000/vote/check?voterId=${voter.ID}`)
+        .get(`${API_URL}/vote/check?voterId=${voter.ID}`)
         .then((res) => {
           if (res.data.voted) {
             setVotedCandidateId(res.data.candidateId);
@@ -27,7 +28,7 @@ function Voter() {
   }, []);
 
   const fetchCandidates = () => {
-    axios.get('http://localhost:3000/get/candidate')
+    axios.get(`${API_URL}/get/candidate`)
       .then((res) => {
         setCandidates(res.data);
       })
@@ -53,7 +54,7 @@ function Voter() {
     }
 
     try {
-      await axios.post('http://localhost:3000/vote', {
+      await axios.post(`${API_URL}/vote`, {
         candidateId,
         voterId: voter.ID,
       });
@@ -61,7 +62,6 @@ function Voter() {
       setVotedCandidateId(candidateId);
       alert('Codkaaga waa la diiwaangeliyay!');
 
-      // Update vote count locally
       setCandidates((prev) =>
         prev.map((c) =>
           c._id === candidateId
@@ -74,7 +74,6 @@ function Voter() {
     }
   };
 
-  // Fix: spelling mistake ("Postion" → "Position")
   const uniquePositions = Array.from(
     new Set(candidates.map((c) => c.Position || c.Postion))
   );
@@ -116,7 +115,7 @@ function Voter() {
                       className="bg-white border p-6 rounded-lg shadow flex flex-col items-center w-72 hover:shadow-lg transition"
                     >
                       <img
-                        src={`http://localhost:3000/sawir/${candidate.image}`}
+                        src={`${API_URL}/sawir/${candidate.image}`}
                         alt={candidate.Name}
                         className="w-24 h-24 rounded-full object-cover mb-3"
                       />

@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 import { FaUserAlt, FaIdBadge } from "react-icons/fa";
 
+const API_URL = "https://back-24vm.onrender.com"; // ← URL backend Render
+
 function AdminVoter() {
   const [Name, setName] = useState("");
   const [ID, setID] = useState("");
@@ -13,15 +15,12 @@ function AdminVoter() {
     event.preventDefault();
 
     axios
-      .post("http://localhost:3000/admin/voter", {
-        Name,
-        ID,
-      })
+      .post(`${API_URL}/admin/voter`, { Name, ID })
       .then((res) => {
         if (res.data.success) {
           toast.success("Login Successfully");
 
-          // ✅ Save voter object in localStorage
+          // Save voter object in localStorage
           localStorage.setItem("voterUser", JSON.stringify(res.data.data));
           localStorage.setItem("lock", "true");
 

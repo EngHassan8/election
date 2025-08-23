@@ -8,24 +8,21 @@ import {
   LineChart, Line,
 } from 'recharts';
 
+const BASE_URL = "https://your-backend.onrender.com"; // <== Halkan geli URL-ka backend-kaaga
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A020F0', '#FF1493'];
 
-function VoteResult () {
+function VoteResult() {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:3000/results')
-      .then(res => {
-        setResults(res.data);
-      })
+    axios.get(`${BASE_URL}/results`)
+      .then(res => setResults(res.data))
       .catch(err => console.error('Error fetching results:', err));
   }, []);
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
-      <div className="w-[250px]">
-        <SideVoter />
-      </div>
+      <div className="w-[250px]"><SideVoter /></div>
 
       <div className="flex-1 p-6">
         <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center">
@@ -44,21 +41,14 @@ function VoteResult () {
                   className="bg-white shadow-lg rounded-xl p-4 flex items-center gap-6 hover:shadow-xl transition"
                 >
                   <img
-                    src={
-                      candidate.image
-                        ? `http://localhost:3000/sawir/${candidate.image}`
-                        : "https://via.placeholder.com/100"
-                    }
+                    src={candidate.image ? `${BASE_URL}/sawir/${candidate.image}` : "https://via.placeholder.com/100"}
                     alt={candidate.Name}
                     className="w-14 h-14 rounded-full object-cover border"
                   />
-
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold text-blue-800">{candidate.Name}</h3>
                     <p className="text-gray-600 mt-1">Tirada Codadka</p>
-                    <p className="text-2xl font-bold text-green-600">
-                      {candidate.voteCount ?? 0}
-                    </p>
+                    <p className="text-2xl font-bold text-green-600">{candidate.voteCount ?? 0}</p>
                   </div>
                 </div>
               ))}
@@ -71,7 +61,7 @@ function VoteResult () {
                 <h3 className="text-xl font-semibold mb-4 text-center">Bar Chart</h3>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={results} margin={{ bottom: 70 }}>
-                    <XAxis 
+                    <XAxis
                       dataKey="Name"
                       interval={0}
                       tick={({ x, y, payload, index }) => {
@@ -79,11 +69,7 @@ function VoteResult () {
                         return (
                           <g transform={`translate(${x},${y + 10})`}>
                             <image
-                              href={
-                                candidate?.image
-                                  ? `http://localhost:3000/sawir/${candidate.image}`
-                                  : "https://via.placeholder.com/30"
-                              }
+                              href={candidate?.image ? `${BASE_URL}/sawir/${candidate.image}` : "https://via.placeholder.com/30"}
                               x={-15}
                               y={0}
                               width={30}
