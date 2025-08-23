@@ -27,8 +27,8 @@ function Admin() {
     setLoading(true);
     try {
       const res = await axios.post("https://back-24vm.onrender.com/admin/login", {
-        Email,
-        Password,
+        email: Email,      // 🔥 lowercase
+        password: Password // 🔥 lowercase
       });
 
       setLoading(false);
