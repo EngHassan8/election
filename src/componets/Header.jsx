@@ -31,8 +31,6 @@ function Header() {
           <NavLink to="/" onClick={toggleMenu} className="flex items-center gap-2 hover:text-blue-600"> Home</NavLink>
           <NavLink to="/about" onClick={toggleMenu} className="flex items-center gap-2 hover:text-blue-600">About</NavLink>
           <NavLink to="/contact" onClick={toggleMenu} className="flex items-center gap-2 hover:text-blue-600"> Contact</NavLink>
-          <NavLink to="/login" onClick={toggleMenu} className="flex items-center gap-2 hover:text-blue-600"> Login</NavLink>
-          <NavLink to="/register" onClick={toggleMenu} className="flex items-center gap-2 hover:text-blue-600"> Resgiter</NavLink>
         </ul>
 
         {/* Right - Get Started Button (Desktop) */}
