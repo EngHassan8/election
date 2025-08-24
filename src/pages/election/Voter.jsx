@@ -2,18 +2,17 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import SideBar from '../../componets/SideBar';
 
-const API_URL = "https://back-24vm.onrender.com"; // ← URL-kaaga Render
-
 function Voter() {
   const [candidates, setCandidates] = useState([]);
   const [votedCandidateId, setVotedCandidateId] = useState(null);
   const [openPosition, setOpenPosition] = useState(null);
 
+  // Load on mount
   useEffect(() => {
     const voter = JSON.parse(localStorage.getItem("voterUser"));
     if (voter?.ID) {
       axios
-        .get(`${API_URL}/vote/check?voterId=${voter.ID}`)
+        .get(`https://back-1-374m.onrender.com/vote/check?voterId=${voter.ID}`)
         .then((res) => {
           if (res.data.voted) {
             setVotedCandidateId(res.data.candidateId);
@@ -28,7 +27,7 @@ function Voter() {
   }, []);
 
   const fetchCandidates = () => {
-    axios.get(`${API_URL}/get/candidate`)
+    axios.get('https://back-1-374m.onrender.com/get/candidate')
       .then((res) => {
         setCandidates(res.data);
       })
@@ -54,7 +53,7 @@ function Voter() {
     }
 
     try {
-      await axios.post(`${API_URL}/vote`, {
+      await axios.post('https://back-1-374m.onrender.com/vote', {
         candidateId,
         voterId: voter.ID,
       });
@@ -62,6 +61,7 @@ function Voter() {
       setVotedCandidateId(candidateId);
       alert('Codkaaga waa la diiwaangeliyay!');
 
+      // Update vote count locally
       setCandidates((prev) =>
         prev.map((c) =>
           c._id === candidateId
@@ -74,6 +74,7 @@ function Voter() {
     }
   };
 
+  // Fix: spelling mistake ("Postion" → "Position")
   const uniquePositions = Array.from(
     new Set(candidates.map((c) => c.Position || c.Postion))
   );
@@ -115,7 +116,7 @@ function Voter() {
                       className="bg-white border p-6 rounded-lg shadow flex flex-col items-center w-72 hover:shadow-lg transition"
                     >
                       <img
-                        src={`${API_URL}/sawir/${candidate.image}`}
+                        src={`https://back-1-374m.onrender.com/sawir/${candidate.image}`}
                         alt={candidate.Name}
                         className="w-24 h-24 rounded-full object-cover mb-3"
                       />

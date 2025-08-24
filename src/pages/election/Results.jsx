@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import SideBar from '../../componets/SideBar';
+
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell,
   LineChart, Line,
 } from 'recharts';
 
-const API_URL = "https://back-24vm.onrender.com"; // ← URL-kaaga Render
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A020F0', '#FF1493'];
 
 function Results() {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    axios.get(`${API_URL}/results`)
+    axios.get('https://back-1-374m.onrender.com/results')
       .then(res => {
-        console.log("Results:", res.data);
+        console.log("Results:", res.data); // ← Hubi in 'image' ku jiro
         setResults(res.data);
       })
       .catch(err => console.error('Error fetching results:', err));
@@ -44,15 +44,17 @@ function Results() {
                   key={candidate._id}
                   className="bg-white shadow-lg rounded-xl p-4 flex items-center gap-6 hover:shadow-xl transition"
                 >
+                  {/* Sawirka Musharaxa */}
                   <img
                     src={
                       candidate.image
-                        ? `${API_URL}/sawir/${candidate.image}`
+                        ? `https://back-1-374m.onrender.com/sawir/${candidate.image}`
                         : "https://via.placeholder.com/100"
                     }
                     alt={candidate.Name}
                     className="w-14 h-14 rounded-full object-cover border"
                   />
+
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold text-blue-800">{candidate.Name}</h3>
                     <p className="text-gray-600 mt-1">Tirada Codadka</p>

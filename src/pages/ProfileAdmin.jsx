@@ -1,10 +1,7 @@
-// src/pages/ProfileAdmin.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
-import SideBar from "../componets/SideBar"; // Make sure this exists
-
-const BASE_URL = "https://back-24vm.onrender.com";
+import SideBar from '../componets/SideBar';
 
 const ProfileAdmin = () => {
   const [registerData, setRegisterData] = useState({ Email: "", Password: "" });
@@ -12,10 +9,10 @@ const ProfileAdmin = () => {
   const [editMode, setEditMode] = useState(null);
   const [editedAdmin, setEditedAdmin] = useState({ Email: "", Password: "" });
 
-  // Fetch all admins
+  // Fetch all admins from backend
   const fetchAdmins = async () => {
     try {
-      const res = await axios.get(`${BASE_URL}/get/Mamule`);
+      const res = await axios.get("https://back-1-374m.onrender.com/get/Mamule");
       setAdmins(res.data);
     } catch (error) {
       toast.error("Error fetching admins");
@@ -30,7 +27,7 @@ const ProfileAdmin = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BASE_URL}/admin/Register`, registerData);
+      const res = await axios.post("https://back-1-374m.onrender.com/admin/Register", registerData);
       toast.success(res.data);
       setRegisterData({ Email: "", Password: "" });
       fetchAdmins();
@@ -39,14 +36,10 @@ const ProfileAdmin = () => {
     }
   };
 
-  // Save edited admin
-  const handleEditSave = async (adminId, e) => {
-    e.preventDefault();
+  // Save edited admin info
+  const handleEditSave = async (adminId) => {
     try {
-      const payload = { Email: editedAdmin.Email };
-      if (editedAdmin.Password.trim() !== "") payload.Password = editedAdmin.Password;
-
-      await axios.put(`${BASE_URL}/update/${adminId}`, payload);
+      await axios.put(`https://back-1-374m.onrender.com/update/${adminId}`, editedAdmin);
       toast.success("Updated successfully");
       setEditMode(null);
       setEditedAdmin({ Email: "", Password: "" });
@@ -56,11 +49,11 @@ const ProfileAdmin = () => {
     }
   };
 
-  // Delete admin
+  // Delete admin by id
   const handleDelete = async (adminId) => {
     if (!window.confirm("Are you sure you want to delete this admin?")) return;
     try {
-      await axios.delete(`${BASE_URL}/remove/${adminId}`);
+      await axios.delete(`https://back-1-374m.onrender.com/remove/${adminId}`);
       toast.success("Deleted successfully");
       fetchAdmins();
     } catch (error) {
@@ -69,13 +62,13 @@ const ProfileAdmin = () => {
   };
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
+    <div className='flex bg-gray-100 min-h-screen'>
       <SideBar />
       <div className="p-4 max-w-4xl mx-auto w-full">
         <Toaster />
         <h1 className="text-2xl font-bold mb-4">Admin Profile Page</h1>
 
-        {/* Register Admin */}
+        {/* Register Admin Form */}
         <form onSubmit={handleRegister} className="p-4 border rounded shadow bg-white max-w-md mb-8">
           <h2 className="font-semibold text-lg mb-2">Register Admin</h2>
           <input
@@ -99,7 +92,7 @@ const ProfileAdmin = () => {
           </button>
         </form>
 
-        {/* Admin List */}
+        {/* List of Admins */}
         <div className="mt-4">
           <h2 className="font-bold text-xl mb-2">All Admins</h2>
           <div className="space-y-3">
@@ -117,13 +110,12 @@ const ProfileAdmin = () => {
                       type="password"
                       value={editedAdmin.Password}
                       onChange={(e) => setEditedAdmin({ ...editedAdmin, Password: e.target.value })}
-                      placeholder="Leave blank to keep password"
                       className="block w-full p-2 border mb-2 rounded"
                     />
                     <div className="flex gap-2">
                       <button
                         className="bg-green-600 text-white px-3 py-1 rounded"
-                        onClick={(e) => handleEditSave(admin._id, e)}
+                        onClick={() => handleEditSave(admin._id)}
                       >
                         Save
                       </button>

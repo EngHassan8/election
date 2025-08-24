@@ -11,7 +11,6 @@ function Admin() {
   const [checkingLogin, setCheckingLogin] = useState(true);
   const navigate = useNavigate();
 
-  // ✅ haddii hore loo login sameeyay -> u gudub dashboard
   useEffect(() => {
     const storedAdmin = localStorage.getItem("login");
     if (storedAdmin) {
@@ -21,40 +20,36 @@ function Admin() {
     }
   }, [navigate]);
 
-  // ✅ Handle Login
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post("https://back-24vm.onrender.com/admin/login", {
-        email: Email,      // 🔥 lowercase
-        password: Password // 🔥 lowercase
+      const res = await axios.post("https://back-1-374m.onrender.com/admin/login", {
+        Email,
+        Password,
       });
 
       setLoading(false);
 
       if (res.data.success) {
-        toast.success("Login Successful 🎉");
+        toast.success("Login Successful");
         localStorage.setItem("login", JSON.stringify(res.data.data));
         setTimeout(() => {
           navigate("/dashbord");
         }, 200);
       } else {
-        toast.error(res.data.message || "Incorrect Email or Password ❌");
+        toast.error("Incorrect Email or Password");
       }
     } catch (err) {
       setLoading(false);
-      toast.error("Server error 🚨");
+      toast.error("Server error");
       console.error(err);
     }
   };
 
   if (checkingLogin) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Loading...
-      </div>
-    );
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   return (
@@ -70,7 +65,6 @@ function Admin() {
           Admin Login
         </h2>
 
-        {/* Email Input */}
         <div className="relative mb-5">
           <User className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
           <input
@@ -79,12 +73,10 @@ function Admin() {
             value={Email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full pl-10 p-3 border border-gray-300 rounded-lg 
-              focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full pl-10 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
 
-        {/* Password Input */}
         <div className="relative mb-8">
           <Lock className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" />
           <input
@@ -93,17 +85,14 @@ function Admin() {
             value={Password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full pl-10 p-3 border border-gray-300 rounded-lg 
-              focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full pl-10 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg 
-            hover:bg-blue-700 transition font-semibold"
+          className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
         >
           {loading ? "Logging in..." : "Login"}
         </button>

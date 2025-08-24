@@ -9,9 +9,6 @@ const Dashboard = () => {
   const [totalCandidates, setTotalCandidates] = useState(0);
   const navigate = useNavigate();
 
-  // Backend base URL
-  const API_BASE = process.env.REACT_APP_API_URL || "https://back-24vm.onrender.com";
-
   // Check login
   useEffect(() => {
     const login = localStorage.getItem("login");
@@ -24,11 +21,11 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTotals = async () => {
       try {
-        const votersRes = await axios.get(`${API_BASE}/total`);
+        const votersRes = await axios.get("https://back-1-374m.onrender.com/total");
         console.log("Voters:", votersRes.data);
         setTotalVoters(votersRes.data.total || 0);
 
-        const candidatesRes = await axios.get(`${API_BASE}/total/election`);
+        const candidatesRes = await axios.get("https://back-1-374m.onrender.com/total/election");
         console.log("Candidates:", candidatesRes.data);
         setTotalCandidates(candidatesRes.data.totalElection || 0);
       } catch (err) {
@@ -37,17 +34,20 @@ const Dashboard = () => {
     };
 
     fetchTotals();
-  }, [API_BASE]);
+  }, []);
 
   return (
     <div className="flex bg-gray-50 min-h-screen">
+      {/* Sidebar */}
       <SideBar />
 
+      {/* Main Content */}
       <div className="flex-1 p-6 max-w-7xl mx-auto">
         <h1 className="text-4xl font-extrabold mb-8 text-center text-blue-900 drop-shadow">
           🗳️ Election Management Dashboard
         </h1>
 
+        {/* Info Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <InfoCard
             icon={<Users className="text-blue-800" />}
@@ -75,6 +75,7 @@ const Dashboard = () => {
           />
         </div>
 
+        {/* Chart Section */}
         <div className="bg-white p-6 shadow-md rounded-xl">
           <div className="flex items-center gap-3 mb-4">
             <BarChart3 className="text-gray-700" />
@@ -91,7 +92,7 @@ const Dashboard = () => {
   );
 };
 
-// Info Card Component
+// Reusable Info Card
 const InfoCard = ({ icon, title, value, bg }) => {
   const colors = {
     blue: "bg-blue-100 text-blue-900",

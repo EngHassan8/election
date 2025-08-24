@@ -26,10 +26,8 @@ function Candidates() {
 
   const navigate = useNavigate();
 
-  const API_BASE = "https://back-24vm.onrender.com";
-
   useEffect(() => {
-    axios.get(`${API_BASE}/get/election`)
+    axios.get("http://localhost:3000/get/election")
       .then((res) => {
         setElections(res.data);
         setLoadingElections(false);
@@ -46,13 +44,13 @@ function Candidates() {
   const uniquePositions = [...new Set(elections.map(e => e.Position))];
 
   const handleTotalE = () => {
-    axios.get(`${API_BASE}/total/election`)
+    axios.get("https://back-1-374m.onrender.com/total/election")
       .then((res) => setTotal(res.data.totalElection))
       .catch((err) => console.log(err));
   };
 
   const handleGetCandidates = () => {
-    axios.get(`${API_BASE}/get/candidate`)
+    axios.get('https://back-1-374m.onrender.com/get/candidate')
       .then((response) => setCandidates(response.data))
       .catch((err) => {
         console.log(err);
@@ -74,7 +72,7 @@ function Candidates() {
     formData.append('img', image);
 
     try {
-      await axios.post(`${API_BASE}/new/Candidates`, formData, {
+      await axios.post('https://back-1-374m.onrender.com/new/Candidates', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       toast.success('Registered successfully');
@@ -88,7 +86,7 @@ function Candidates() {
   };
 
   const handleDelete = (id) => {
-    axios.delete(`${API_BASE}/remove/candidate/${id}`)
+    axios.delete('https://back-1-374m.onrender.com/remove/candidate/' + id)
       .then(() => {
         toast.success('Data has been deleted');
         setCandidates(prev => prev.filter(item => item._id !== id));
@@ -137,7 +135,7 @@ function Candidates() {
 
           {candidates.length > 0 ? candidates.map((item) => (
             <div key={item._id} className="grid grid-cols-7 border-b py-2 items-center text-sm text-gray-700">
-              <img src={`${API_BASE}/sawir/${item.image}`} alt="Candidate" className="w-10 h-10 rounded-full object-cover" />
+              <img src={`https://back-1-374m.onrender.com/sawir/${item.image}`} alt="Candidate" className="w-10 h-10 rounded-full object-cover" />
               <span>{item.Name}</span><span>{item.Email}</span><span>{item.ID}</span><span>{item.Position}</span>
               <span><span className="px-2 py-1 bg-green-200 text-green-800 rounded text-xs">Active</span></span>
               <span className="flex gap-2 text-xl">

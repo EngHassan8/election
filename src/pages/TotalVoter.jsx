@@ -4,16 +4,13 @@ import { MdDelete } from "react-icons/md";
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 import SideBar from '../componets/SideBar';
-
-const BASE_URL = "https://back-24vm.onrender.com";
-
 const TotalVoter = () => {
   const [data, setData] = useState([]);
   const [nameSearch, setNameSearch] = useState("");
   const [idSearch, setIdSearch] = useState("");
 
   const handleGetData = () => {
-    axios.get(`${BASE_URL}/get`)
+    axios.get("https://back-1-374m.onrender.com/get")
       .then((response) => {
         setData(response.data);
       })
@@ -27,7 +24,7 @@ const TotalVoter = () => {
   }, []);
 
   const handleDelete = (id) => {
-    axios.delete(`${BASE_URL}/remove/${id}`)
+    axios.delete(`https://back-1-374m.onrender.com/remove/${id}`)
       .then(() => {
         alert("✅ Xogta waa la tirtiray.");
         setData(prev => prev.filter(item => item._id !== id));
@@ -44,8 +41,10 @@ const TotalVoter = () => {
 
   return (
     <div className='flex bg-gray-100 min-h-screen'>
+      {/* Sidebar */}
       <SideBar />
 
+      {/* Main Content */}
       <div className="flex-1 p-6">
         <div className="max-w-7xl mx-auto bg-white p-6 rounded shadow">
           <div className="flex justify-between items-center mb-6">
@@ -57,6 +56,7 @@ const TotalVoter = () => {
             </NavLink>
           </div>
 
+          {/* Search Filters */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             <input
               type="text"
@@ -74,6 +74,7 @@ const TotalVoter = () => {
             />
           </div>
 
+          {/* Data Table */}
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white border rounded-md shadow text-sm">
               <thead className="bg-blue-600 text-white">
@@ -93,7 +94,7 @@ const TotalVoter = () => {
                     <tr key={index} className="hover:bg-gray-100 text-center">
                       <td className="border p-2">
                         <img
-                          src={`${BASE_URL}/sawir/${item.image}`}
+                          src={`https://back-1-374m.onrender.com/sawir/${item.image}`}
                           alt="User"
                           className="rounded-full w-10 h-10 object-cover mx-auto ring-2 ring-blue-400"
                         />
