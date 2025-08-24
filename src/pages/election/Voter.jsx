@@ -7,33 +7,23 @@ function Voter() {
   const [votedCandidateId, setVotedCandidateId] = useState(null);
   const [openPosition, setOpenPosition] = useState(null);
 
-  // Load on mount
   useEffect(() => {
     const voter = JSON.parse(localStorage.getItem("voterUser"));
     if (voter?.ID) {
       axios
         .get(`https://back-1-374m.onrender.com/vote/check?voterId=${voter.ID}`)
         .then((res) => {
-          if (res.data.voted) {
-            setVotedCandidateId(res.data.candidateId);
-          }
+          if (res.data.voted) setVotedCandidateId(res.data.candidateId);
         })
-        .catch((err) => {
-          console.error('Error checking vote:', err);
-        });
+        .catch((err) => console.error('Error checking vote:', err));
     }
-
     fetchCandidates();
   }, []);
 
   const fetchCandidates = () => {
     axios.get('https://back-1-374m.onrender.com/get/candidate')
-      .then((res) => {
-        setCandidates(res.data);
-      })
-      .catch((err) => {
-        console.error('Error fetching candidates:', err);
-      });
+      .then((res) => setCandidates(res.data))
+      .catch((err) => console.error('Error fetching candidates:', err));
   };
 
   const togglePositionView = (position) => {
@@ -61,7 +51,6 @@ function Voter() {
       setVotedCandidateId(candidateId);
       alert('Codkaaga waa la diiwaangeliyay!');
 
-      // Update vote count locally
       setCandidates((prev) =>
         prev.map((c) =>
           c._id === candidateId
@@ -74,7 +63,6 @@ function Voter() {
     }
   };
 
-  // Fix: spelling mistake ("Postion" → "Position")
   const uniquePositions = Array.from(
     new Set(candidates.map((c) => c.Position || c.Postion))
   );
@@ -84,14 +72,14 @@ function Voter() {
       <SideBar />
 
       <div className="w-full p-6 max-w-6xl mx-auto mt-10">
-        <div className="mb-6">
+        <div className="mb-6 text-center">
           <h2 className="text-2xl font-bold text-gray-800">Doorashooyinka</h2>
           <p className="text-gray-600">Team Qaran 2025 | Doorashada guud ee ardayda</p>
           <p className="text-gray-600">29/9/2025 – 1:00</p>
         </div>
 
         {uniquePositions.length === 0 && (
-          <p className="text-gray-500">Musharax lama helin.</p>
+          <p className="text-gray-500 text-center">Musharax lama helin.</p>
         )}
 
         {uniquePositions.map((position) => (
@@ -110,15 +98,18 @@ function Voter() {
               <div className="flex flex-wrap gap-8">
                 {candidates
                   .filter((c) => (c.Position || c.Postion) === position)
+                  .sort((a, b) => (b.voteCount || 0) - (a.voteCount || 0))
                   .map((candidate) => (
                     <div
                       key={candidate._id}
                       className="bg-white border p-6 rounded-lg shadow flex flex-col items-center w-72 hover:shadow-lg transition"
                     >
                       <img
-                        src={`https://back-1-374m.onrender.com/sawir/${candidate.image}`}
+                        src={candidate.image
+                          ? `https://back-1-374m.onrender.com/sawir/${candidate.image}`
+                          : "https://via.placeholder.com/100"}
                         alt={candidate.Name}
-                        className="w-24 h-24 rounded-full object-cover mb-3"
+                        className="w-24 h-24 rounded-full object-cover mb-3 border"
                       />
                       <h3 className="text-lg font-semibold text-gray-800 mb-1">
                         {candidate.Name}
@@ -129,8 +120,9 @@ function Voter() {
 
                       <button
                         onClick={() => handleVote(candidate._id)}
-                        disabled={!!votedCandidateId}
-                        className={`mt-4 px-4 py-2 rounded-full transition 
+                        disabled={!!votedCandidateId && votedCandidateId !== candidate._id}
+                        title={votedCandidateId ? "Waad horey u codeysay" : ""}
+                        className={`mt-4 px-4 py-2 rounded-full transition
                           ${votedCandidateId
                             ? votedCandidateId === candidate._id
                               ? 'bg-green-600 text-white'

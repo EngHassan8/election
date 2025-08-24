@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import SideBar from '../../componets/SideBar';
-
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell,
@@ -16,7 +15,7 @@ function Results() {
   useEffect(() => {
     axios.get('https://back-1-374m.onrender.com/results')
       .then(res => {
-        console.log("Results:", res.data); // ← Hubi in 'image' ku jiro
+        console.log("Results:", res.data);
         setResults(res.data);
       })
       .catch(err => console.error('Error fetching results:', err));
@@ -44,7 +43,6 @@ function Results() {
                   key={candidate._id}
                   className="bg-white shadow-lg rounded-xl p-4 flex items-center gap-6 hover:shadow-xl transition"
                 >
-                  {/* Sawirka Musharaxa */}
                   <img
                     src={
                       candidate.image

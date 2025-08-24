@@ -1,37 +1,41 @@
-// src/pages/TotalVoter.jsx
 import React, { useState, useEffect } from 'react';
 import { MdDelete } from "react-icons/md";
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 import SideBar from '../componets/SideBar';
+import toast, { Toaster } from 'react-hot-toast';
+
 const TotalVoter = () => {
   const [data, setData] = useState([]);
   const [nameSearch, setNameSearch] = useState("");
   const [idSearch, setIdSearch] = useState("");
 
-  const handleGetData = () => {
-    axios.get("https://back-1-374m.onrender.com/get")
-      .then((response) => {
-        setData(response.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  // Fetch all voters
+  const handleGetData = async () => {
+    try {
+      const response = await axios.get("https://back-1-374m.onrender.com/get");
+      setData(response.data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Error fetching data");
+    }
   };
 
   useEffect(() => {
     handleGetData();
   }, []);
 
-  const handleDelete = (id) => {
-    axios.delete(`https://back-1-374m.onrender.com/remove/${id}`)
-      .then(() => {
-        alert("✅ Xogta waa la tirtiray.");
-        setData(prev => prev.filter(item => item._id !== id));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  // Delete voter
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this voter?")) return;
+    try {
+      await axios.delete(`https://back-1-374m.onrender.com/remove/${id}`);
+      toast.success("✅ Voter deleted successfully");
+      setData(prev => prev.filter(item => item._id !== id));
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete voter");
+    }
   };
 
   const filtered = data.filter((item) =>
@@ -41,11 +45,9 @@ const TotalVoter = () => {
 
   return (
     <div className='flex bg-gray-100 min-h-screen'>
-      {/* Sidebar */}
       <SideBar />
-
-      {/* Main Content */}
       <div className="flex-1 p-6">
+        <Toaster />
         <div className="max-w-7xl mx-auto bg-white p-6 rounded shadow">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl sm:text-3xl font-bold text-blue-700">📋 Diiwaanka Ardayda</h1>
@@ -56,7 +58,6 @@ const TotalVoter = () => {
             </NavLink>
           </div>
 
-          {/* Search Filters */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             <input
               type="text"
@@ -74,7 +75,6 @@ const TotalVoter = () => {
             />
           </div>
 
-          {/* Data Table */}
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white border rounded-md shadow text-sm">
               <thead className="bg-blue-600 text-white">
@@ -90,13 +90,14 @@ const TotalVoter = () => {
               </thead>
               <tbody>
                 {filtered.length > 0 ? (
-                  filtered.map((item, index) => (
-                    <tr key={index} className="hover:bg-gray-100 text-center">
+                  filtered.map((item) => (
+                    <tr key={item._id} className="hover:bg-gray-100 text-center">
                       <td className="border p-2">
                         <img
                           src={`https://back-1-374m.onrender.com/sawir/${item.image}`}
-                          alt="User"
+                          alt={item.Name}
                           className="rounded-full w-10 h-10 object-cover mx-auto ring-2 ring-blue-400"
+                          onError={(e) => e.target.src = "/default-user.png"}
                         />
                       </td>
                       <td className="border px-2 py-2">{item.Name}</td>

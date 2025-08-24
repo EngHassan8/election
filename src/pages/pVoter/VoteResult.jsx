@@ -10,23 +10,35 @@ import {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A020F0', '#FF1493'];
 
-function VoteResult () {
+function VoteResult() {
   const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios.get('https://back-1-374m.onrender.com/results')
       .then(res => {
         setResults(res.data);
       })
-      .catch(err => console.error('Error fetching results:', err));
+      .catch(err => console.error('Error fetching results:', err))
+      .finally(() => setLoading(false));
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <p className="text-gray-600 text-lg">Loading results...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
+      {/* Sidebar */}
       <div className="w-[250px]">
         <SideVoter />
       </div>
 
+      {/* Main Content */}
       <div className="flex-1 p-6">
         <h2 className="text-3xl font-bold text-blue-700 mb-6 text-center">
           Natiijooyinka Codbixinta
@@ -74,14 +86,14 @@ function VoteResult () {
                     <XAxis 
                       dataKey="Name"
                       interval={0}
-                      tick={({ x, y, payload, index }) => {
+                      tick={({ x, y, index }) => {
                         const candidate = results[index];
                         return (
                           <g transform={`translate(${x},${y + 10})`}>
                             <image
                               href={
                                 candidate?.image
-                                  ? `https://back-1-374m.onrender.com//sawir/${candidate.image}`
+                                  ? `https://back-1-374m.onrender.com/sawir/${candidate.image}`
                                   : "https://via.placeholder.com/30"
                               }
                               x={-15}
@@ -107,7 +119,7 @@ function VoteResult () {
               {/* Pie Chart */}
               <div className="bg-white p-4 rounded shadow">
                 <h3 className="text-xl font-semibold mb-4 text-center">Pie Chart</h3>
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
                       data={results}
@@ -120,7 +132,7 @@ function VoteResult () {
                       label={({ name }) => name}
                     >
                       {results.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell key={`cell-${entry._id}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
                     <Tooltip />
@@ -131,7 +143,7 @@ function VoteResult () {
               {/* Line Chart */}
               <div className="bg-white p-4 rounded shadow">
                 <h3 className="text-xl font-semibold mb-4 text-center">Line Chart</h3>
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={results}>
                     <XAxis dataKey="Name" />
                     <YAxis />

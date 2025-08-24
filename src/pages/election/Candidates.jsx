@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import SideBar from "../../componets/SideBar"; // your custom sidebar
+import SideBar from "../../componets/SideBar"; 
 import { BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -9,8 +9,6 @@ import { Toaster, toast } from 'react-hot-toast';
 
 function Candidates() {
   const [showForm, setShowForm] = useState(false);
-
-  // Candidate form fields
   const [Name, setName] = useState('');
   const [Email, setEmail] = useState('');
   const [ID, setID] = useState('');
@@ -20,48 +18,54 @@ function Candidates() {
 
   const [candidates, setCandidates] = useState([]);
   const [TotalElection, setTotal] = useState(0);
-
   const [elections, setElections] = useState([]);
   const [loadingElections, setLoadingElections] = useState(true);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:3000/get/election")
-      .then((res) => {
-        setElections(res.data);
-        setLoadingElections(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch elections:", err);
-        setLoadingElections(false);
-      });
-
-    handleGetCandidates();
-    handleTotalE();
+    fetchElections();
+    fetchCandidates();
+    fetchTotalElections();
   }, []);
+
+  const fetchElections = async () => {
+    try {
+      const res = await axios.get("https://back-1-374m.onrender.com/get/election");
+      setElections(res.data);
+    } catch (err) {
+      toast.error("Failed to fetch elections");
+      console.error(err);
+    } finally {
+      setLoadingElections(false);
+    }
+  };
+
+  const fetchCandidates = async () => {
+    try {
+      const res = await axios.get('https://back-1-374m.onrender.com/get/candidate');
+      setCandidates(res.data);
+    } catch (err) {
+      toast.error("Failed to fetch candidates");
+      console.error(err);
+    }
+  };
+
+  const fetchTotalElections = async () => {
+    try {
+      const res = await axios.get("https://back-1-374m.onrender.com/total/election");
+      setTotal(res.data.totalElection);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const uniquePositions = [...new Set(elections.map(e => e.Position))];
 
-  const handleTotalE = () => {
-    axios.get("https://back-1-374m.onrender.com/total/election")
-      .then((res) => setTotal(res.data.totalElection))
-      .catch((err) => console.log(err));
-  };
-
-  const handleGetCandidates = () => {
-    axios.get('https://back-1-374m.onrender.com/get/candidate')
-      .then((response) => setCandidates(response.data))
-      .catch((err) => {
-        console.log(err);
-        toast.error('Failed to fetch candidates');
-      });
-  };
-
-  const handleNewCandidates = async (event) => {
-    event.preventDefault();
-    if (!image) { toast.error('Please upload an image'); return; }
-    if (!electionId) { toast.error('Please select an election'); return; }
+  const handleNewCandidate = async (e) => {
+    e.preventDefault();
+    if (!image) return toast.error('Please upload an image');
+    if (!electionId) return toast.error('Please select an election');
 
     const formData = new FormData();
     formData.append('Name', Name);
@@ -75,26 +79,32 @@ function Candidates() {
       await axios.post('https://back-1-374m.onrender.com/new/Candidates', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      toast.success('Registered successfully');
+      toast.success('Candidate registered successfully');
       setShowForm(false);
-      setName(''); setEmail(''); setID(''); setPosition(''); setElectionId(''); setImage(null);
-      handleGetCandidates();
-    } catch (error) {
-      console.error('POST error:', error);
+      resetForm();
+      fetchCandidates();
+    } catch (err) {
+      console.error(err);
       toast.error('Failed to register candidate');
     }
   };
 
-  const handleDelete = (id) => {
-    axios.delete('https://back-1-374m.onrender.com/remove/candidate/' + id)
-      .then(() => {
-        toast.success('Data has been deleted');
-        setCandidates(prev => prev.filter(item => item._id !== id));
-      })
-      .catch(() => toast.error('Failed to delete candidate'));
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`https://back-1-374m.onrender.com/remove/candidate/${id}`);
+      toast.success('Candidate deleted');
+      setCandidates(prev => prev.filter(c => c._id !== id));
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to delete candidate');
+    }
   };
 
   const toggleForm = () => setShowForm(!showForm);
+
+  const resetForm = () => {
+    setName(''); setEmail(''); setID(''); setPosition(''); setElectionId(''); setImage(null);
+  };
 
   return (
     <div className="flex bg-gray-50 min-h-screen">
@@ -103,9 +113,7 @@ function Candidates() {
       <section className="flex-1 p-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-blue-800">Candidates Management</h1>
-          <button onClick={() => setShowForm(true)} className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700">
-            Add Candidate
-          </button>
+          <button onClick={() => setShowForm(true)} className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700">Add Candidate</button>
         </div>
 
         {/* Stats */}
@@ -146,12 +154,12 @@ function Candidates() {
           )) : (<p className="text-gray-500 text-center py-4">No candidates found.</p>)}
         </div>
 
-        {/* Candidate Form Popup */}
+        {/* Candidate Form */}
         {showForm && (
           <div className="fixed inset-0 bg-blue-200 bg-opacity-40 flex items-center justify-center z-50">
             <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-xl overflow-auto max-h-[90vh]">
               <h2 className="text-xl font-bold text-blue-800 mb-6">Add New Candidate</h2>
-              <form onSubmit={handleNewCandidates} className="space-y-4">
+              <form onSubmit={handleNewCandidate} className="space-y-4">
                 <input type="text" placeholder="Name" value={Name} onChange={e => setName(e.target.value)} required className="w-full border px-3 py-2 rounded" />
                 <input type="email" placeholder="Email" value={Email} onChange={e => setEmail(e.target.value)} required className="w-full border px-3 py-2 rounded" />
                 <input type="text" placeholder="ID" value={ID} onChange={e => setID(e.target.value)} required className="w-full border px-3 py-2 rounded" />

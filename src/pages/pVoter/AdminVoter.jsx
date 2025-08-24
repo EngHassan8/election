@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
@@ -7,35 +7,44 @@ import { FaUserAlt, FaIdBadge } from "react-icons/fa";
 function AdminVoter() {
   const [Name, setName] = useState("");
   const [ID, setID] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (event) => {
-    event.preventDefault();
+  // Auto-redirect if already logged in
+  useEffect(() => {
+    const voter = localStorage.getItem("voterUser");
+    if (voter) navigate("/dashVoter");
+  }, [navigate]);
 
-    axios
-      .post("https://back-1-374m.onrender.com/admin/voter", {
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+
+    try {
+      const res = await axios.post("https://back-1-374m.onrender.com/admin/voter", {
         Name,
         ID,
-      })
-      .then((res) => {
-        if (res.data.success) {
-          toast.success("Login Successfully");
-
-          // ✅ Save voter object in localStorage
-          localStorage.setItem("voterUser", JSON.stringify(res.data.data));
-          localStorage.setItem("lock", "true");
-
-          setTimeout(() => {
-            navigate("/dashVoter");
-          }, 1000);
-        } else {
-          toast.error("Incorrect Name or ID");
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        toast.error("Server Error");
       });
+
+      if (res.data.success) {
+        toast.success("Login Successfully");
+
+        // Save voter object in localStorage
+        localStorage.setItem("voterUser", JSON.stringify(res.data.data));
+        localStorage.setItem("lock", "true");
+
+        setTimeout(() => {
+          navigate("/dashVoter");
+        }, 1000);
+      } else {
+        toast.error("Incorrect Name or ID");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Server Error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -74,9 +83,10 @@ function AdminVoter() {
 
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-[#50C9CE] to-[#4A90E2] text-white p-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-shadow shadow-md"
+          disabled={loading}
+          className="w-full bg-gradient-to-r from-[#50C9CE] to-[#4A90E2] text-white p-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-shadow shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
       <Toaster />

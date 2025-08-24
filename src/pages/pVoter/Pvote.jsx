@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast"; // Notifications
+import toast, { Toaster } from "react-hot-toast";
 import SideVoter from "../../componets/SideVoter";
 
 function Pvote() {
@@ -12,7 +12,7 @@ function Pvote() {
   const [openPosition, setOpenPosition] = useState(null);
   const [loadingVote, setLoadingVote] = useState(false);
 
-  // Load user from localStorage & fetch data on mount
+  // Load user from localStorage & fetch candidates/votes
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("voterUser"));
     if (storedUser?.ID) {
@@ -22,7 +22,7 @@ function Pvote() {
     }
   }, []);
 
-  // Fetch all candidates from backend
+  // Fetch all candidates
   const fetchCandidates = async () => {
     try {
       const res = await axios.get("https://back-1-374m.onrender.com/get/candidate");
@@ -32,7 +32,7 @@ function Pvote() {
     }
   };
 
-  // Fetch all positions user has voted for
+  // Fetch positions user has voted for
   const fetchVotedPositions = async (voterId) => {
     try {
       const res = await axios.get(
@@ -50,7 +50,7 @@ function Pvote() {
     }
   };
 
-  // Handle login form submit
+  // Login form submit
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -72,16 +72,16 @@ function Pvote() {
     }
   };
 
-  // Toggle showing candidates of a position
+  // Toggle candidate list for position
   const togglePositionView = (Position) => {
     setOpenPosition((prev) => (prev === Position ? null : Position));
   };
 
-  // Handle voting for a candidate
+  // Vote for candidate
   const handleVote = async (candidateId, Position) => {
-    if (!user?.ID) return toast.error("Fadlan login ku samee marka hore.");
+    if (!user?.ID) return toast.error("Please login first.");
     if (votedPositions[Position])
-      return toast.error(`Waad horey u codeysay booska ${Position}!`);
+      return toast.error(`You already voted for ${Position}!`);
 
     try {
       setLoadingVote(true);
@@ -90,23 +90,28 @@ function Pvote() {
         voterId: user.ID,
         Position,
       });
-
-      // Refresh vote status and candidates from backend
       await fetchVotedPositions(user.ID);
       await fetchCandidates();
-
-      toast.success("Codkaaga waa la diiwaangeliyay!");
+      toast.success("Your vote has been recorded!");
     } catch (err) {
-      toast.error(err.response?.data?.error || "Cod bixinta waa fashilantay.");
+      toast.error(err.response?.data?.error || "Voting failed.");
     } finally {
       setLoadingVote(false);
     }
   };
 
-  // Get unique positions from candidates
+  // Logout function
+  const handleLogout = () => {
+    localStorage.removeItem("voterUser");
+    setUser(null);
+    setVotedPositions({});
+    setOpenPosition(null);
+    toast.success("Logged out successfully");
+  };
+
   const uniquePositions = [...new Set(candidates.map((c) => c.Position))];
 
-  // If user not logged in, show login form
+  // Show login form if not logged in
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
@@ -115,12 +120,10 @@ function Pvote() {
           onSubmit={handleLogin}
           className="bg-white p-6 rounded shadow-md w-full max-w-sm"
         >
-          <h2 className="text-2xl font-bold mb-6 text-center">
-            Fadlan Gala Account kaaga
-          </h2>
+          <h2 className="text-2xl font-bold mb-6 text-center">Voter Login</h2>
           <input
             type="text"
-            placeholder="Magacaaga"
+            placeholder="Name"
             value={Name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -128,7 +131,7 @@ function Pvote() {
           />
           <input
             type="text"
-            placeholder="ID-gaaga"
+            placeholder="ID"
             value={ID}
             onChange={(e) => setID(e.target.value)}
             required
@@ -145,7 +148,7 @@ function Pvote() {
     );
   }
 
-  // Main voting UI
+  // Main voting dashboard
   return (
     <div className="flex bg-gray-50 min-h-screen">
       <div className="md:w-[260px] w-full">
@@ -155,31 +158,33 @@ function Pvote() {
       <Toaster position="top-right" />
 
       <div className="flex-1 max-w-6xl mx-auto px-10 py-8">
-        <header className="mb-10">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-1">
-            Doorashooyinka
-          </h1>
-          <p className="text-gray-700">
-            Team Qaran 2025 | Doorashada guud ee ardayda
-          </p>
+        <header className="mb-10 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-extrabold text-gray-900 mb-1">Elections</h1>
+            <p className="text-gray-700">Team Qaran 2025 | Student Elections</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+          >
+            Logout
+          </button>
         </header>
 
         {uniquePositions.length === 0 ? (
-          <p className="text-gray-500">Musharax lama helin.</p>
+          <p className="text-gray-500">No candidates found.</p>
         ) : (
           uniquePositions.map((Position) => (
             <section key={Position} className="mb-12">
               <div className="flex justify-between items-center bg-gray-100 p-5 rounded-lg shadow-md mb-6">
-                <h2 className="text-2xl font-semibold text-blue-700">
-                  {Position}
-                </h2>
+                <h2 className="text-2xl font-semibold text-blue-700">{Position}</h2>
                 <button
                   onClick={() => togglePositionView(Position)}
                   className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
                 >
                   {openPosition === Position
-                    ? "Qarso Musharaxiinta"
-                    : "Muuji Musharaxiinta"}
+                    ? "Hide Candidates"
+                    : "Show Candidates"}
                 </button>
               </div>
 
@@ -196,7 +201,7 @@ function Pvote() {
                           className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center hover:shadow-2xl transition transform hover:scale-105"
                         >
                           <img
-                            src={`http://localhost:3000/sawir/${candidate.image}`}
+                            src={`https://back-1-374m.onrender.com/sawir/${candidate.image}`}
                             alt={candidate.Name}
                             className="w-28 h-28 rounded-full object-cover mb-4 border-4 border-blue-500"
                           />
@@ -204,15 +209,12 @@ function Pvote() {
                             {candidate.Name}
                           </h3>
                           <p className="text-blue-700 font-bold text-lg mb-4">
-                            Codad: {candidate.voteCount ?? 0}
+                            Votes: {candidate.voteCount ?? 0}
                           </p>
 
-                          {/* Vote Button */}
                           {!isUserVote && !hasVoted && (
                             <button
-                              onClick={() =>
-                                handleVote(candidate._id, Position)
-                              }
+                              onClick={() => handleVote(candidate._id, Position)}
                               disabled={loadingVote || votedPositions[Position]}
                               className={`w-full py-3 rounded-full font-semibold text-white ${
                                 loadingVote || votedPositions[Position]
@@ -220,17 +222,16 @@ function Pvote() {
                                   : "bg-blue-600 hover:bg-blue-700 transition"
                               }`}
                             >
-                              {loadingVote ? "Fadlan sug..." : "Codee"}
+                              {loadingVote ? "Please wait..." : "Vote"}
                             </button>
                           )}
 
-                          {/* Button if user already voted for this candidate */}
                           {isUserVote && (
                             <button
                               disabled
                               className="w-full py-3 rounded-full font-semibold text-white bg-green-600 cursor-default"
                             >
-                              Waad Codeysay
+                              Voted
                             </button>
                           )}
                         </div>
