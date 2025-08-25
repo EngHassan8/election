@@ -10,19 +10,18 @@ function Profile() {
     const data = JSON.parse(localStorage.getItem("voterUser"));
 
     if (data?.Name && data?.ID) {
-      const fetchProfile = async () => {
-        try {
-          const res = await axios.get("https://back-1-374m.onrender.com/profile", {
-            params: { Name: data.Name, ID: data.ID },
-          });
+      axios
+        .get("https://back-1-374m.onrender.com/voter/profile", {
+          params: { Name: data.Name, ID: data.ID },
+        })
+        .then((res) => {
           setVoter(res.data);
           setError("");
-        } catch (err) {
+        })
+        .catch((err) => {
           console.error(err);
           setError("Error loading profile.");
-        }
-      };
-      fetchProfile();
+        });
     } else {
       setError("User not logged in or missing credentials");
     }
@@ -46,17 +45,19 @@ function Profile() {
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
+      {/* Sidebar */}
       <div className="md:w-[260px] w-full">
         <SideVoter />
       </div>
 
+      {/* Main Content */}
       <div className="flex-1 flex items-center justify-center px-4 bg-[#e9f2fb] py-10">
         <div className="bg-white rounded-xl shadow-lg w-full max-w-4xl p-6 space-y-6">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-700 to-cyan-600 text-white rounded-lg p-6 flex flex-col sm:flex-row items-center sm:items-start gap-6 shadow-md">
             {voter.image ? (
               <img
-                src={`https://back-1-374m.onrender.com/sawir/${voter.image}`}
+                src={`http://localhost:3000/sawir/${voter.image}`}
                 alt={voter.Name}
                 className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-white shadow-lg"
               />
