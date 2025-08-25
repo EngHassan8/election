@@ -4,6 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 import { FaUserAlt, FaIdBadge } from "react-icons/fa";
 
+// ✅ Setup Axios interceptor si token loo daro requests kasta
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 function AdminVoter() {
   const [Name, setName] = useState("");
   const [ID, setID] = useState("");
@@ -21,6 +30,7 @@ function AdminVoter() {
     setLoading(true);
 
     try {
+      // 👉 Login request
       const res = await axios.post("https://back-1-374m.onrender.com/admin/voter", {
         Name,
         ID,
@@ -29,7 +39,8 @@ function AdminVoter() {
       if (res.data.success) {
         toast.success("Login Successfully");
 
-        // Save voter object in localStorage
+        // ✅ Save token + voter data
+        localStorage.setItem("token", res.data.token); // token from backend
         localStorage.setItem("voterUser", JSON.stringify(res.data.data));
         localStorage.setItem("lock", "true");
 
@@ -41,7 +52,7 @@ function AdminVoter() {
       }
     } catch (err) {
       console.error(err);
-      toast.error("Server Error");
+      toast.error("Server Error or Unauthorized");
     } finally {
       setLoading(false);
     }
@@ -57,6 +68,7 @@ function AdminVoter() {
           Welcome Voter Admin
         </h2>
 
+        {/* Name input */}
         <div className="relative w-full mb-6">
           <FaUserAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
           <input
@@ -66,9 +78,11 @@ function AdminVoter() {
             value={Name}
             onChange={(e) => setName(e.target.value)}
             className="w-full pl-12 h-12 rounded-lg border border-gray-300 focus:border-[#4A90E2] focus:ring-2 focus:ring-[#50C9CE] transition outline-none text-gray-700"
+            autoComplete="username"
           />
         </div>
 
+        {/* ID input */}
         <div className="relative w-full mb-8">
           <FaIdBadge className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
           <input
@@ -78,9 +92,11 @@ function AdminVoter() {
             value={ID}
             onChange={(e) => setID(e.target.value)}
             className="w-full pl-12 h-12 rounded-lg border border-gray-300 focus:border-[#4A90E2] focus:ring-2 focus:ring-[#50C9CE] transition outline-none text-gray-700"
+            autoComplete="off"
           />
         </div>
 
+        {/* Submit button */}
         <button
           type="submit"
           disabled={loading}
