@@ -11,7 +11,6 @@ function Admin() {
   const [checkingLogin, setCheckingLogin] = useState(true);
   const navigate = useNavigate();
 
-  // Check if already logged in
   useEffect(() => {
     const storedAdmin = localStorage.getItem("login");
     if (storedAdmin) {
@@ -21,10 +20,10 @@ function Admin() {
     }
   }, [navigate]);
 
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       const res = await axios.post("https://back-1-374m.onrender.com/admin/login", {
         Email,
@@ -33,8 +32,7 @@ function Admin() {
 
       setLoading(false);
 
-      // Check success properly
-      if (res.data.success || res.data.success === "Login successfully") {
+      if (res.data.success) {
         toast.success("Login Successful");
         localStorage.setItem("login", JSON.stringify(res.data.data));
         setTimeout(() => {
@@ -45,21 +43,13 @@ function Admin() {
       }
     } catch (err) {
       setLoading(false);
-      if (err.response && err.response.status === 401) {
-        toast.error("Incorrect Email or Password");
-      } else {
-        toast.error("Server error. Please try again later.");
-      }
+      toast.error("Server error");
       console.error(err);
     }
   };
 
   if (checkingLogin) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Loading...
-      </div>
-    );
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   return (
@@ -83,7 +73,6 @@ function Admin() {
             value={Email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            autoComplete="email"
             className="w-full pl-10 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
@@ -96,7 +85,6 @@ function Admin() {
             value={Password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            autoComplete="current-password"
             className="w-full pl-10 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
