@@ -1,35 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import SideVoter from "../../componets/SideVoter";
 import { Clock, Users, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
-const API_URL = "https://back-24vm.onrender.com"; // backend Render
 
 const DashVoter = () => {
   const navigate = useNavigate();
-  const [stats, setStats] = useState({
-    totalVoters: 0,
-    nextElection: "Loading...",
-    remainingDays: 0,
-  });
 
   useEffect(() => {
     const lock = localStorage.getItem("lock");
+
     if (!lock || lock === "null" || lock === "undefined") {
       navigate("/adminVoter");
     }
-
-    // Fetch stats from backend
-    axios.get(`${API_URL}/voter/stats`)
-      .then(res => {
-        setStats({
-          totalVoters: res.data.totalVoters,
-          nextElection: res.data.nextElection,
-          remainingDays: res.data.remainingDays
-        });
-      })
-      .catch(err => console.error(err));
   }, []);
 
   return (
@@ -57,21 +39,21 @@ const DashVoter = () => {
             <Users size={36} className="text-blue-700" />
             <div>
               <p className="text-sm text-gray-600">Tirada Guud ee Diiwaan Gashan</p>
-              <p className="text-xl font-bold text-blue-800">{stats.totalVoters}</p>
+              <p className="text-xl font-bold text-blue-800">1,245</p>
             </div>
           </div>
           <div className="bg-yellow-100 p-4 rounded-xl shadow flex items-center gap-4">
             <Calendar size={36} className="text-yellow-700" />
             <div>
               <p className="text-sm text-gray-600">Doorashada Soo Socota</p>
-              <p className="text-xl font-bold text-yellow-800">{stats.nextElection}</p>
+              <p className="text-xl font-bold text-yellow-800">25 June 2025</p>
             </div>
           </div>
           <div className="bg-green-100 p-4 rounded-xl shadow flex items-center gap-4">
             <Clock size={36} className="text-green-700" />
             <div>
               <p className="text-sm text-gray-600">Waqtiga Haray</p>
-              <p className="text-xl font-bold text-green-800">{stats.remainingDays} Maalmood</p>
+              <p className="text-xl font-bold text-green-800">8 Maalmood</p>
             </div>
           </div>
         </div>
