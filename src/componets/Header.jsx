@@ -67,9 +67,9 @@ function Header() {
           <NavLink to="/contact" onClick={toggleMenu} className="flex items-center gap-2"><FiMail /> Contact</NavLink>
           <NavLink to="/login" onClick={toggleMenu} className="flex items-center gap-2"><FiBarChart2 /> Login</NavLink>
           <NavLink to="/register" onClick={toggleMenu} className="flex items-center gap-2"><FiUserCheck /> Register</NavLink>
-          <NavLink to="/register" onClick={toggleMenu}>
+          <NavLink to="/" onClick={toggleMenu}>
             <button className="border border-blue-600 px-4 py-2 rounded mt-4">
-              Register to Vote
+              Get started 
             </button>
           </NavLink>
         </div>
