@@ -35,9 +35,9 @@ function Header() {
 
         {/* Right - Get Started Button (Desktop) */}
         <div className="sm:flex hidden">
-          <NavLink to="/register">
+          <NavLink to="/">
             <button className="border border-blue-600 px-4 py-2 rounded hover:bg-blue-600 hover:text-white transition">
-              
+              Get Started
             </button>
           </NavLink>
         </div>
