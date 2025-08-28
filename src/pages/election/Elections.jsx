@@ -42,6 +42,7 @@ function Elections() {
   const handleNewElection = async (e) => {
     e.preventDefault();
     try {
+      // Halkan URL-ka waa sax: /new/election
       await axios.post("https://back-1-374m.onrender.com/new/election", {
         Name,
         Position,
@@ -85,7 +86,6 @@ function Elections() {
       <SideBar />
 
       <section className='flex-1 p-8'>
-        {/* Header */}
         <div className='flex justify-between items-center mb-8'>
           <h1 className='text-2xl font-bold text-blue-800'>Election Management</h1>
           <button 
