@@ -37,7 +37,7 @@ function Header() {
         <div className="sm:flex hidden">
           <NavLink to="/register">
             <button className="border border-blue-600 px-4 py-2 rounded hover:bg-blue-600 hover:text-white transition">
-              Register to Vote
+              
             </button>
           </NavLink>
         </div>
