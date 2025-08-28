@@ -12,7 +12,7 @@ const ProfileAdmin = () => {
   // Fetch all admins from backend
   const fetchAdmins = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/get/Mamule");
+      const res = await axios.get("https://back-1-374m.onrender.com/get/Mamule");
       setAdmins(res.data);
     } catch (error) {
       toast.error("Error fetching admins");
@@ -27,7 +27,7 @@ const ProfileAdmin = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:3000/admin/Register", registerData);
+      const res = await axios.post("https://back-1-374m.onrender.com/admin/Register", registerData);
       toast.success(res.data);
       setRegisterData({ Email: "", Password: "" });
       fetchAdmins();
@@ -39,7 +39,7 @@ const ProfileAdmin = () => {
   // Save edited admin info
   const handleEditSave = async (adminId) => {
     try {
-      const res = await axios.put(`http://localhost:3000/update/${adminId}`, editedAdmin);
+      const res = await axios.put(`https://back-1-374m.onrender.com/admin/update/${adminId}`, editedAdmin);
       toast.success(res.data?.success || "Updated successfully");
       setEditMode(null);
       setEditedAdmin({ Email: "", Password: "" });
@@ -59,7 +59,7 @@ const ProfileAdmin = () => {
   const handleDelete = async (adminId) => {
     if (!window.confirm("Are you sure you want to delete this admin?")) return;
     try {
-      await axios.delete(`http://localhost:3000/admin/remove/${adminId}`);
+      await axios.delete(`https://back-1-374m.onrender.com/admin/remove/${adminId}`);
       toast.success("Admin deleted successfully");
 
       // Remove deleted admin from frontend state
