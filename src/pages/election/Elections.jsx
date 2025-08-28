@@ -20,7 +20,7 @@ function Elections() {
 
   // GET elections on load
   useEffect(() => {
-    axios.get("https://back-1-374m.onrender.com/get/election")
+    axios.get("http://localhost:3000/get/election")
       .then((res) => {
         setElections(res.data);
       })
@@ -71,7 +71,7 @@ function Elections() {
  
   ////
    const handleDelete = (id) => {
-    axios.delete(`https://back-1-374m.onrender.com/election/${id}`)
+    axios.delete(`https://back-1-374m.onrender.com/remove/election/${id}`)
       .then(() => {
         alert("✅ Xogta waa la tirtiray.");
         setData(prev => prev.filter(item => item._id !== id));
