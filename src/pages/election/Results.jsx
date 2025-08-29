@@ -23,7 +23,7 @@ function Results() {
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
-      <div className="w-[250px]">
+      <div className="sm:w-[250px]">
         <SideBar />
       </div>
 

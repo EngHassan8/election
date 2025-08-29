@@ -34,7 +34,7 @@ function VoteResult() {
   return (
     <div className="flex bg-gray-100 min-h-screen">
       {/* Sidebar */}
-      <div className="w-[250px]">
+      <div className="sm:w-[250px] ">
         <SideVoter />
       </div>
 

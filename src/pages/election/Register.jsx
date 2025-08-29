@@ -45,12 +45,12 @@ function Register() {
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="w-1/5 bg-white shadow-md">
+      <div className="sm:w-1/5 bg-white shadow-md">
         <SideBar />
       </div>
 
       {/* Main Content */}
-      <div className="w-4/5 p-10">
+      <div className="sm:w-4/5 p-10">
         <div className="max-w-2xl mx-auto bg-white p-8 shadow-xl rounded-2xl">
           <h2 className="text-3xl font-bold mb-6 text-center text-blue-700">
             📥 Register Form

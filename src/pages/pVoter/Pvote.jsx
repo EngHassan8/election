@@ -151,7 +151,7 @@ function Pvote() {
   // Main voting dashboard
   return (
     <div className="flex bg-gray-50 min-h-screen">
-      <div className="md:w-[260px] w-full">
+      <div className="sm:w-[260px] ">
         <SideVoter />
       </div>
 

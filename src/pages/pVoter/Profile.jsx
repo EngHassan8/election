@@ -46,7 +46,7 @@ function Profile() {
   return (
     <div className="flex bg-gray-100 min-h-screen">
       {/* Sidebar */}
-      <div className="md:w-[260px] w-full">
+      <div className="sm:w-[260px] w">
         <SideVoter />
       </div>
 
