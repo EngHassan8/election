@@ -100,15 +100,6 @@ function Pvote() {
     }
   };
 
-  // Logout function
-  const handleLogout = () => {
-    localStorage.removeItem("voterUser");
-    setUser(null);
-    setVotedPositions({});
-    setOpenPosition(null);
-    toast.success("Logged out successfully");
-  };
-
   const uniquePositions = [...new Set(candidates.map((c) => c.Position))];
 
   // Show login form if not logged in
@@ -158,17 +149,9 @@ function Pvote() {
       <Toaster position="top-right" />
 
       <div className="flex-1 max-w-6xl mx-auto px-10 py-8">
-        <header className="mb-10 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-extrabold text-gray-900 mb-1">Elections</h1>
-            <p className="text-gray-700">Team Qaran 2025 | Student Elections</p>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-          >
-            Logout
-          </button>
+        <header className="mb-10">
+          <h1 className="text-3xl font-extrabold text-gray-900 mb-1">Elections</h1>
+          <p className="text-gray-700">Team Qaran 2025 | Student Elections</p>
         </header>
 
         {uniquePositions.length === 0 ? (
