@@ -103,7 +103,7 @@ function Elections() {
             <BarChart3 className='text-blue-500 w-10 h-10' />
             <div>
               <h2 className='text-3xl font-bold text-blue-700'>{elections.length}</h2>
-              <p className='text-gray-600'>Total Elections</p>
+              <p className='text-gray-600'>Total Elections .</p>
             </div>
           </div>
           <div className='bg-white shadow-md rounded-lg p-5 flex items-center gap-4 hover:shadow-xl transition'>
