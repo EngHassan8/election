@@ -3,7 +3,6 @@ import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
   BarChart2,
   LogOut as LogOutIcon,
-  Settings,
   Users,
   Menu,
   X,
@@ -11,7 +10,7 @@ import {
 
 const menus = [
   { name: "Vote", icon: BarChart2, path: "/Pvote" },
-  { name: "voteResult", icon: BarChart2, path: "/voteResult" },
+  { name: "Vote Result", icon: BarChart2, path: "/voteResult" },
   { name: "Profile", icon: Users, path: "/profile" },
 ];
 
@@ -20,17 +19,17 @@ const SideVoter = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Check if voter is logged in
   useEffect(() => {
     const lock = localStorage.getItem("lock");
-
     if (!lock || lock === "null" || lock === "undefined") {
       navigate("/adminVoter");
     }
-  }, []);
+  }, [navigate]);
 
+  // Logout
   const LogOut = () => {
-    localStorage.removeItem("lock");
-    localStorage.removeItem("voterUser"); // optional
+    localStorage.clear(); // ✅ remove everything
     navigate("/adminVoter");
   };
 
@@ -46,7 +45,7 @@ const SideVoter = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:static top-0 left-0 h-screen w-64 bg-gradient-to-b from-blue-800 to-blue-600 text-white p-6 shadow-lg flex flex-col justify-between transform transition-transform duration-300 z-40
+        className={`fixed md:static top-0 left-0 h-screen w-64 bg-gradient-to-b from-blue-800 to-blue-600 text-white p-6 shadow-lg flex flex-col transform transition-transform duration-300 z-40
         ${open ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
         {/* Title */}
@@ -57,7 +56,6 @@ const SideVoter = () => {
           <nav className="flex flex-col gap-2">
             {menus.map((item, index) => {
               const isActive = location.pathname === item.path;
-
               return (
                 <NavLink
                   key={index}
@@ -67,7 +65,7 @@ const SideVoter = () => {
                       ? "bg-white text-blue-800 font-semibold shadow-md"
                       : "hover:bg-blue-700"
                   }`}
-                  onClick={() => setOpen(false)} // close menu on mobile after click
+                  onClick={() => setOpen(false)} // ✅ close on mobile
                 >
                   <item.icon className="w-5 h-5" />
                   {item.name}
@@ -77,8 +75,8 @@ const SideVoter = () => {
           </nav>
         </div>
 
-        {/* Logout */}
-        <div className="mt-6">
+        {/* Logout (always bottom) */}
+        <div className="mt-auto sticky bottom-4">
           <button
             onClick={LogOut}
             className="w-full flex items-center justify-center gap-2 bg-white text-blue-800 font-bold py-2 rounded-xl hover:bg-blue-100 transition"
