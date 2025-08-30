@@ -32,7 +32,7 @@ function Elections() {
   const HandleNewElection = (e) => {
     e.preventDefault();
 
-    axios.post("https://back-1-374m.onrender.com/new/election", {
+    axios.post("https://back-1-374m.onrender.com/new/elction", {
       Name,
       Postion,
       StartDate,
